@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# runtime data (traces may contain student questions)
+logs/
+*.db
+
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

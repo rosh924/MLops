@@ -1,0 +1,9 @@
+requests
+numpy
+scikit-learn
+pyyaml
+pandas
+sentence-transformers
+fastapi
+uvicorn
+# notebook only (optional): matplotlib jupyter
