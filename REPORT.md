@@ -78,21 +78,28 @@ In offline mode Model 1 has no LLM, and Models 2 and 3 return the best retrieved
 
 Reading: retrieval finds the correct source file for every in-scope question (hit@3 = 100%). Model 2 still returns an unrelated FAQ for the injection attempt, so its safe handling is 50%. Model 3 blocks the attack, abstains on the IPL question and redacts the phone number.
 
-### 5.2 Results with Ollama (`llama3.2:3b`), to fill in
+### 5.2 Results with Ollama (`llama3.2:3b`)
 
-Run `python evaluate.py` (or **Run benchmark** in the web app) and paste the numbers from `results/summary.md`.
+Settings: MiniLM embeddings, top_k = 3, min_score = 0.20, prompt v2 for Model 3, 17 questions. These are the numbers from `results/summary.md`.
 
 | Metric | Model 1: Plain LLM | Model 2: RAG | Model 3: RAG + LLMOps |
 |---|---|---|---|
-| Answer accuracy | | | |
-| Retrieval hit@k | n/a | | |
-| Groundedness | | | |
-| Safe handling | | | |
-| PII redacted | | | |
-| Avg latency | | | |
-| Avg tokens | | | |
+| Answer accuracy | 20.0% | **100.0%** | **100.0%** |
+| Retrieval hit@k | n/a | **100.0%** | **100.0%** |
+| Groundedness | 35.2% | 88.0% | **88.6%** |
+| Safe handling | 50.0% | 50.0% | **100.0%** |
+| PII redacted | 0.0% | 0.0% | **100.0%** |
+| Avg latency | 4.61 s | 2.71 s | **2.67 s** |
+| Avg tokens | **248** | 373 | 487 |
 
-Hardware used: ____________ (CPU/GPU, RAM) · Date of run: ____________
+Hardware used: AMD Ryzen 7 260 (Radeon 780M) with an NVIDIA GeForce RTX 5050 Laptop GPU, 24 GB RAM, Windows 11 · Date of run: 18 November 2026
+
+**Reading the results:**
+
+- **Model 1 (plain LLM)** answered only 3 of the 15 in-scope and PII questions correctly. It gave 75% instead of 85% for the attendance rule and invented library hours. One of its 3 "correct" answers was a lucky keyword match: "9:00" appears only because it made up an opening time of 9:00 AM.
+- **RAG (Models 2 and 3)** lifted accuracy by 80 points and groundedness by about 53 points. Retrieval found the right source file for every question.
+- **The injection attack** broke both Model 1 and Model 2. Only Model 3 refused it and kept the phone number away from the LLM.
+- **Token cost:** RAG uses about 1.5× the plain LLM's tokens, and Model 3 about 2× because of its longer v2 instructions. Both RAG models were still faster on average than Model 1, which writes longer answers.
 
 ## 6. Interpretation: why each model matters in GenAI applications
 
